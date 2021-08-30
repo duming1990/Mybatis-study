@@ -1,0 +1,7 @@
+CREATE TABLE blog (
+	id VARCHAR (50) NOT NULL COMMENT '博客id',
+	title VARCHAR (100) DEFAULT NULL COMMENT '博客标题',
+	author VARCHAR (30) DEFAULT NULL COMMENT '博客作者',
+	creat_time datetime NOT NULL COMMENT '创建时间',
+	views INT (30) NOT NULL COMMENT '浏览量'
+) ENGINE = INNODB DEFAULT CHARSET = utf8

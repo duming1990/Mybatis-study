@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--绑定一个指定的Dao/Mapper接口-->
+<mapper namespace="com.duming.dao.UserDao">
+    <!--    sql注入举例
+    select * from  user where id= ?
+    select * from  user where id= 1 or 1=1
+    -->
+    <select id="getUserList" resultType="com.duming.entity.User">
+        select * from  user
+    </select>
+
+    <select id="getUserLike" resultType="com.duming.entity.User">
+        select * from  user where name like #{name}"%"
+    </select>
+
+    <select id="getUserById" parameterType="int" resultType="com.duming.entity.User">
+        select * from user where id = #{id}
+    </select>
+
+    <insert id="addUser" parameterType="com.duming.entity.User">
+        insert into user (id,name,pwd) values (#{id},#{name},#{pwd})
+    </insert>
+    <insert id="addUser2" parameterType="map">
+        insert into user (id,name,pwd) values (#{userId},#{userName},#{userPwd})
+    </insert>
+</mapper>
