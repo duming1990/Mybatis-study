@@ -1,3 +1,4 @@
+```sql
 CREATE TABLE blog (
 	id VARCHAR (50) NOT NULL COMMENT '博客id',
 	title VARCHAR (100) DEFAULT NULL COMMENT '博客标题',

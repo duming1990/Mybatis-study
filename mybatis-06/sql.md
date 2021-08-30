@@ -1,3 +1,4 @@
+```sql
 CREATE TABLE teacher(
 id INT NOT NULL ,
 `name` VARCHAR(20) DEFAULT NULL,
