@@ -86,7 +86,6 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
-
     //调用父类BaseBuilder构造方法，初始化Configuration核心配置对象，new Configuration()注册了类型别名+一些配置项
     super(new Configuration());
     //设置当前线程的错误上下文信息，便于发生错误时记录错误对象
