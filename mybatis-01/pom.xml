@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mybatis-01</artifactId>
-
     <build>
         <resources>
             <resource>
