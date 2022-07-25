@@ -39,13 +39,13 @@ public class MapperProxyFactory<T> {
     return mapperInterface;
   }
 
-  public Map<Method, MapperMethodInvoker> getMethodCache() {
-    return methodCache;
-  }
-
   @SuppressWarnings("unchecked")
   protected T newInstance(MapperProxy<T> mapperProxy) {
     return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);
+  }
+
+  public Map<Method, MapperMethodInvoker> getMethodCache() {
+    return methodCache;
   }
 
   public T newInstance(SqlSession sqlSession) {

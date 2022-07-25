@@ -88,12 +88,18 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
   }
 
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
+    //事务接口：包装一个数据库连接，处理该连接的生命周期包括：连接的创建，预处理，提交/回滚，和关闭
     Transaction tx = null;
     try {
+      //从configuration中获取environment信息
       final Environment environment = configuration.getEnvironment();
+      //获取事务工厂
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+      //根据数据源，事务隔离级别，是否自动提交，创建一个事务对象
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+      //创建Executor执行器对象
       final Executor executor = configuration.newExecutor(tx, execType);
+      //创建一个默认的SqlSession对象
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
       closeTransaction(tx); // may have fetched a connection so lets call close()

@@ -707,9 +707,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    //如果缓存可用，创建缓存执行器（装饰模式）
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
+    //将执行器加入拦截器链（责任链模式）
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

@@ -34,6 +34,10 @@ public class ErrorContext {
   private ErrorContext() {
   }
 
+  /**
+   * 不是全局唯一的单例模式，而是每个线程唯一的单例模式
+   * @return
+   */
   public static ErrorContext instance() {
     return LOCAL.get();
   }
