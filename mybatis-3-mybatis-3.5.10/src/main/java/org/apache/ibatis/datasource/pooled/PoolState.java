@@ -24,8 +24,9 @@ import java.util.List;
 public class PoolState {
 
   protected PooledDataSource dataSource;
-
+  //空闲连接
   protected final List<PooledConnection> idleConnections = new ArrayList<>();
+  //活跃连接
   protected final List<PooledConnection> activeConnections = new ArrayList<>();
   protected long requestCount = 0;
   protected long accumulatedRequestTime = 0;
