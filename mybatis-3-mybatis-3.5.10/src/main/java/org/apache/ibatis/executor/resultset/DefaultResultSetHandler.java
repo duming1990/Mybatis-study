@@ -202,6 +202,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     validateResultMapsCount(rsw, resultMapCount);
 
     while (rsw != null && resultMapCount > resultSetCount) {
+
       ResultMap resultMap = resultMaps.get(resultSetCount);
       //处理结果集映射 把rsw中的结果放入multipleResults中
       handleResultSet(rsw, resultMap, multipleResults, null);
@@ -313,7 +314,9 @@ public class DefaultResultSetHandler implements ResultSetHandler {
       } else {
         if (resultHandler == null) {
           DefaultResultHandler defaultResultHandler = new DefaultResultHandler(objectFactory);
+          //对结果处理 把数据库查询出来的数据转换成java对象
           handleRowValues(rsw, resultMap, defaultResultHandler, rowBounds, null);
+          //将结果放入multipleResults
           multipleResults.add(defaultResultHandler.getResultList());
         } else {
           handleRowValues(rsw, resultMap, resultHandler, rowBounds, null);
@@ -340,6 +343,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
       checkResultHandler();
       handleRowValuesForNestedResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
     } else {
+      //单一的resultMap结果集映射，没有嵌套
       handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
     }
   }
@@ -363,10 +367,15 @@ public class DefaultResultSetHandler implements ResultSetHandler {
       throws SQLException {
     DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
     ResultSet resultSet = rsw.getResultSet();
+    //如果结果集不是从0开始 比如分页情况下 需要跳过一些行
     skipRows(resultSet, rowBounds);
+    //循环结果集
     while (shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {
+      //discriminator鉴别器的处理 可以根据条件选择不同的映射
       ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(resultSet, resultMap, null);
+      //TODO 正真的从resultSet中映射出一个对象
       Object rowValue = getRowValue(rsw, discriminatedResultMap, null);
+      //将对象加入resultHandler.resultList
       storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet);
     }
   }
@@ -409,13 +418,18 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
     final ResultLoaderMap lazyLoader = new ResultLoaderMap();
+    //TODO 实例化一个对象 类型为resultmap.getType 最终调用了objectFactory.create（）方法 此时返回的对象所有属性都是空的
     Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
+
     if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
+      //将rowValue对象封装成元对象MetaObject
       final MetaObject metaObject = configuration.newMetaObject(rowValue);
       boolean foundValues = this.useConstructorMappings;
       if (shouldApplyAutomaticMappings(resultMap, false)) {
+        //自动映射  如果返回方式配置的是 resultType
         foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;
       }
+      //TODO 映射result节点到返回对象中 比如userinfo对象 属性赋值
       foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, columnPrefix) || foundValues;
       foundValues = lazyLoader.size() > 0 || foundValues;
       rowValue = foundValues || configuration.isReturnInstanceForEmptyRow() ? rowValue : null;
@@ -506,6 +520,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         }
         if (value != null || (configuration.isCallSettersOnNulls() && !metaObject.getSetterType(property).isPrimitive())) {
           // gcode issue #377, call setter on nulls (value is not 'found')
+          //TODO 反射赋值
           metaObject.setValue(property, value);
         }
       }
@@ -645,13 +660,17 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
     this.useConstructorMappings = false; // reset previous mapping result
+    //构造方法中的参数类型
     final List<Class<?>> constructorArgTypes = new ArrayList<>();
+    //构造方法中的具体值
     final List<Object> constructorArgs = new ArrayList<>();
+    //根据构造方法生成对象
     Object resultObject = createResultObject(rsw, resultMap, constructorArgTypes, constructorArgs, columnPrefix);
     if (resultObject != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
       final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
       for (ResultMapping propertyMapping : propertyMappings) {
         // issue gcode #109 && issue #149
+        //判断是否由嵌套或者延迟加载
         if (propertyMapping.getNestedQueryId() != null && propertyMapping.isLazy()) {
           resultObject = configuration.getProxyFactory().createProxy(resultObject, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
           break;
