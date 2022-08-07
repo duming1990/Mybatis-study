@@ -18,6 +18,10 @@
         <package name="com.duming.entity"/>
     </typeAliases>
 
+    <typeHandlers>
+        <typeHandler handler="com.duming.interceptor.EncryptTypeHandler"/>
+    </typeHandlers>
+
     <environments default="test">
         <environment id="test">
             <transactionManager type="JDBC"/>

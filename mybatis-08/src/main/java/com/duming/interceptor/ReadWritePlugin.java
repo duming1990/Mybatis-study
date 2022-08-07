@@ -1,7 +1,6 @@
 package com.duming.interceptor;
 
 import com.duming.constant.DataSourceType;
-import com.sun.xml.internal.ws.encoding.DataSourceStreamingDataHandler;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -45,7 +44,7 @@ public class ReadWritePlugin implements Interceptor {
             dataSourceType=DataSourceType.WRITE;
         }
         //修改当前线程要选择的数据源的key
-        DataSourceHolder.setDataSourceType(dataSourceType);
+//        DataSourceHolder.setDataSourceType(dataSourceType);
 
         //最终调用被拦截的方法
         return invocation.proceed();

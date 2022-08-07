@@ -26,7 +26,10 @@ public class test {
         //获取mapper接口对象（底层时动态代理）
         UserMapper mapper = sqlsession.getMapper(UserMapper.class);
         //调用mapper接口对象的方法操作数据库
-
+//        User user = new User();
+//        user.setId(1);
+//        user.setPwd("2525");
+//        mapper.updateUser(user);
         List<User> list = mapper.getUserById(1);
 
         System.out.println(list);
